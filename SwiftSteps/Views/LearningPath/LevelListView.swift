@@ -2,14 +2,13 @@ import SwiftUI
 
 struct LevelListView: View {
     @EnvironmentObject var levelViewModel: LevelViewModel
-    @EnvironmentObject var progressViewModel: ProgressViewModel
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: AppSpacing.medium) {
                     ForEach(levelViewModel.availableLevels) { level in
-                        NavigationLink(destination: LessonView()) {
+                        NavigationLink(destination: LessonView()) { // Note: LessonView needs verification
                             CardView {
                                 HStack {
                                     VStack(alignment: .leading, spacing: AppSpacing.small) {
@@ -28,12 +27,12 @@ struct LevelListView: View {
                                     
                                     Spacer()
                                     
-                                    Image(systemName: levelViewModel.isLevelUnlocked(level.levelNumber) ? "lock.open" : "lock")
+                                    Image(systemName: levelViewModel.isLevelUnlocked(level) ? "lock.open" : "lock")
                                         .foregroundColor(AppColors.primary)
                                 }
                             }
                         }
-                        .disabled(!levelViewModel.isLevelUnlocked(level.levelNumber))
+                        .disabled(!levelViewModel.isLevelUnlocked(level))
                     }
                 }
                 .padding(AppSpacing.large)

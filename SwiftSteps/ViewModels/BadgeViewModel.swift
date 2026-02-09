@@ -8,7 +8,7 @@ final class BadgeViewModel: ObservableObject {
     @Published private(set) var earnedBadges: [Badge] = []
     
     private let unlockingService: BadgeUnlockingService
-    private(set) var userProgress: UserProgress
+    @Published var userProgress: UserProgress // Changed to Published for binding
     private let allBadges: [Badge]
     
     init(

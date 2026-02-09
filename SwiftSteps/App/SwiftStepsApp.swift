@@ -8,7 +8,7 @@ struct SwiftStepsApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $appState.navigationPath) {
-                HomeView()
+                ContentView()
                     .navigationDestination(for: NavigationRoute.self) { route in
                         switch route {
                         case .levelSelection:
@@ -30,7 +30,7 @@ struct SwiftStepsApp: App {
             }
             .environmentObject(appState)
             .environmentObject(appState.levelViewModel)
-            .environmentObject(ProgressViewModel()) // Temporary: Isolated progress instance for now
+            .environmentObject(appState.badgeViewModel)
         }
     }
 }

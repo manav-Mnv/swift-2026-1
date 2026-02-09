@@ -17,8 +17,7 @@ import SwiftUI
 /// - HomeView → LearningPathView → TrackSelectionView → LevelSelectionView
 struct LearningPathView: View {
     @EnvironmentObject private var appState: AppStateViewModel
-    @EnvironmentObject private var levelViewModel: LevelViewModel
-    @EnvironmentObject private var progressViewModel: ProgressViewModel
+    @EnvironmentObject private var levelViewModel: LevelViewModel // Kept as it might be used by children, though typically passed via environment modifier
     
     var body: some View {
         TrackSelectionView()

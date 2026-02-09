@@ -3,7 +3,6 @@ import SwiftUI
 struct TrackSelectionView: View {
     @EnvironmentObject var appStateViewModel: AppStateViewModel
     @EnvironmentObject var levelViewModel: LevelViewModel
-    @EnvironmentObject var progressViewModel: ProgressViewModel
     
     @State private var showSwiftUILockedAlert = false
     @State private var navigateToLevelSelection = false
@@ -63,7 +62,6 @@ struct TrackSelectionView: View {
         .navigationDestination(isPresented: $navigateToLevelSelection) {
             LevelSelectionView(learningPath: selectedPath)
                 .environmentObject(levelViewModel)
-                .environmentObject(progressViewModel)
         }
         .alert("SwiftUI Track Locked", isPresented: $showSwiftUILockedAlert) {
             Button("OK", role: .cancel) { }
@@ -73,7 +71,7 @@ struct TrackSelectionView: View {
     }
     
     private var isSwiftUIUnlocked: Bool {
-        appStateViewModel.isSwiftUITrackUnlocked(levelViewModel: levelViewModel, progress: progressViewModel)
+        appStateViewModel.isSwiftUITrackUnlocked()
     }
 }
 

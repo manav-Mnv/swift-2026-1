@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct BadgeView: View {
-    @EnvironmentObject var progressViewModel: ProgressViewModel
+    @EnvironmentObject var appState: AppStateViewModel
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: AppSpacing.medium) {
                 ForEach(BadgesData.allBadges) { badge in
-                    let isEarned = progressViewModel.userProgress.earnedBadgeIds.contains(badge.id)
+                    let isEarned = appState.userProgress.earnedBadgeIds.contains(badge.id)
                     
                     CardView {
                         VStack(spacing: AppSpacing.small) {

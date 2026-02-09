@@ -9,8 +9,7 @@ struct LessonDetailView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    @State private var showCompletionMessage = false
-    @State private var showLevelCompletion = false
+    @State private var completedLevel: Level?
     @State private var earnedBadge: Badge? = nil
     
     init(lesson: Lesson, level: Level? = nil) {
@@ -20,6 +19,10 @@ struct LessonDetailView: View {
     
     var body: some View {
         ScrollView {
+            // ... (keep content same until validation logic)
+            // I need to be careful with multi-replace or just targeting the specific blocks.
+            // Since the state variable declaration is at top and sheet at bottom, I'll use multi-replace.
+
             VStack(spacing: AppSpacing.large) {
                 // Lesson title and description
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
@@ -94,7 +97,7 @@ struct LessonDetailView: View {
                                 earnedBadge = nil
                                 
                                 // Show level completion view
-                                showLevelCompletion = true
+                                completedLevel = level
                             } else {
                                 // Just show completion message for individual lesson
                                 showCompletionMessage = true
@@ -150,7 +153,7 @@ struct LessonDetailView: View {
         .onAppear {
             lessonViewModel.loadLesson(lesson)
         }
-        .sheet(isPresented: $showLevelCompletion) {
+        .sheet(item: $completedLevel) { level in
             LevelCompletionView(level: level, earnedBadge: earnedBadge)
                 .onDisappear {
                     // Dismiss back to lesson list when level completion is dismissed

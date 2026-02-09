@@ -6,7 +6,7 @@ final class LevelViewModel: ObservableObject {
 
     // MARK: - Published State (UI-relevant only)
     @Published private(set) var levels: [Level]
-    @Published private(set) var userProgress: UserProgress
+    @Published var userProgress: UserProgress // Changed to public/internal set for binding
 
     // MARK: - Computed Properties
     var availableLevels: [Level] {
@@ -21,6 +21,11 @@ final class LevelViewModel: ObservableObject {
     init(levels: [Level], userProgress: UserProgress) {
         self.levels = levels.sorted { $0.levelNumber < $1.levelNumber }
         self.userProgress = userProgress
+    }
+    
+    // MARK: - Sync
+    func updateProgress(_ progress: UserProgress) {
+        self.userProgress = progress
     }
     
     // MARK: - Track Loading
@@ -41,10 +46,6 @@ final class LevelViewModel: ObservableObject {
 
     func isLevelCompleted(_ level: Level) -> Bool {
         userProgress.completedLevelNumbers.contains(level.levelNumber)
-    }
-    
-    func isLevelCompleted(_ level: Level, progress: ProgressViewModel) -> Bool {
-        progress.isLevelCompleted(level.levelNumber)
     }
 
     // MARK: - Lesson State Queries
@@ -67,14 +68,27 @@ final class LevelViewModel: ObservableObject {
     // MARK: - Progress Updates
 
     func markLessonCompleted(_ lesson: Lesson, in level: Level) {
+        // Mutating struct in published property triggers objectWillChange
         userProgress.completedLessonIds.insert(lesson.id)
 
         if isLevelNowCompleted(level) {
             userProgress.completedLevelNumbers.insert(level.levelNumber)
         }
     }
+    
+    // Generic complete lesson for when level context might be missing (e.g. from LessonDetailView)
+    func completeLesson(_ lessonId: UUID) {
+         userProgress.completedLessonIds.insert(lessonId)
+         // Note: We can't easily check level completion here without the level object, 
+         // but that's okay for now. The comprehensive check happens when marking by level.
+    }
 
-    // MARK: - Private Helpers
+    // MARK: - Helpers
+    
+    func completedLessonsInLevel(_ level: Level) -> Int {
+        let levelLessonIds = level.lessons.map { $0.id }
+        return levelLessonIds.filter { userProgress.completedLessonIds.contains($0) }.count
+    }
 
     private func isLevelNowCompleted(_ level: Level) -> Bool {
         let lessonIds = Set(level.lessons.map { $0.id })

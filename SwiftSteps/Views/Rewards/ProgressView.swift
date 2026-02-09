@@ -23,7 +23,7 @@ import SwiftUI
 /// - Meaningful labels for badges and statistics
 /// - Proper semantic grouping
 struct ProgressView: View {
-    @EnvironmentObject private var progressViewModel: ProgressViewModel
+    @EnvironmentObject private var appState: AppStateViewModel
     @EnvironmentObject private var levelViewModel: LevelViewModel
     
     var body: some View {
@@ -133,8 +133,8 @@ struct ProgressView: View {
         VStack(spacing: AppSpacing.small) {
             ZStack {
                 Circle()
-                    .fill(AppColors.accent.opacity(0.2))
-                    .frame(width: 60, height: 60)
+                .fill(AppColors.accent.opacity(0.2))
+                .frame(width: 60, height: 60)
                 
                 Image(systemName: "star.fill")
                     .font(.system(size: 30))
@@ -157,12 +157,12 @@ struct ProgressView: View {
     
     /// Total completed lessons count
     private var completedLessonsCount: Int {
-        progressViewModel.totalCompletedLessons
+        appState.userProgress.completedLessonsCount
     }
     
     /// Total earned badges count
     private var earnedBadgesCount: Int {
-        progressViewModel.totalEarnedBadges
+        appState.userProgress.earnedBadgesCount
     }
     
     /// Encouraging message based on progress

@@ -23,7 +23,7 @@ struct LessonListView: View {
                         .multilineTextAlignment(.center)
                     
                     ProgressBar(
-                        completed: levelViewModel.userProgress.completedLessonsInLevel(level),
+                        completed: levelViewModel.completedLessonsInLevel(level),
                         total: level.lessons.count
                     )
                     .padding(.horizontal, AppSpacing.medium)

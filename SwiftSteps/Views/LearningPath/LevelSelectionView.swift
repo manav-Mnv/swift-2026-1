@@ -32,7 +32,7 @@ struct LevelSelectionView: View {
                 } else {
                     ForEach(viewModel.availableLevels) { level in
                         let state = viewModel.getLevelState(level)
-                        let completedCount = viewModel.userProgress.completedLessonsInLevel(level)
+                        let completedCount = viewModel.completedLessonsInLevel(level)
                         let itemState = convertLevelStateToItemState(state)
                         
                         LevelCard(

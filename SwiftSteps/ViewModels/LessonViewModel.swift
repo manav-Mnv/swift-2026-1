@@ -5,10 +5,15 @@ import Combine
 final class LessonViewModel: ObservableObject {
 
     // MARK: - Published UI State
+    @Published var userCode: String = ""
     @Published private(set) var lesson: Lesson
     @Published private(set) var runState: RunState = .idle
     @Published private(set) var outputMessage: String = ""
     @Published private(set) var isCompleted: Bool = false
+    
+    // Computed props for View compatibility
+    var output: String { outputMessage }
+    var isCorrect: Bool { runState == .success }
 
     // MARK: - Internal State
     private let validationService: LessonValidationService
@@ -18,6 +23,7 @@ final class LessonViewModel: ObservableObject {
          validationService: LessonValidationService = DefaultLessonValidationService()) {
         self.lesson = lesson
         self.validationService = validationService
+        self.userCode = lesson.codeChallenge ?? "" 
     }
     
     /// Convenience initializer for use in LessonListView where we don't need validation yet
@@ -25,8 +31,21 @@ final class LessonViewModel: ObservableObject {
         let dummyLesson = Lesson(title: "", description: "", content: "")
         self.init(lesson: dummyLesson)
     }
+    
+    // MARK: - Setup
+    func loadLesson(_ lesson: Lesson) {
+        self.lesson = lesson
+        self.userCode = lesson.codeChallenge ?? ""
+        self.runState = .idle
+        self.outputMessage = ""
+        self.isCompleted = false
+    }
 
     // MARK: - Run / Validate
+    
+    func validateCode() {
+        run(userCode: userCode)
+    }
 
     func run(userCode: String) {
         runState = .running
@@ -46,13 +65,20 @@ final class LessonViewModel: ObservableObject {
             }
         }
     }
+    
+    func showHint(index: Int) {
+        // Simple implementation: Append hint to output or show alert
+        // For now, let's append to output
+        let hint = lesson.safeHint(at: index)
+        outputMessage = "Hint: \(hint)\n\n" + outputMessage
+    }
 
     // MARK: - Lesson State Query
     
     /// Determines the state of a lesson based on its position and user progress
-    func getLessonState(_ lesson: Lesson, in lessons: [Lesson], progress: ProgressViewModel) -> LessonState {
+    func getLessonState(_ lesson: Lesson, in lessons: [Lesson], progress: UserProgress) -> LessonState {
         // Check if completed
-        if progress.isLessonCompleted(lesson.id) {
+        if progress.completedLessonIds.contains(lesson.id) {
             return .completed
         }
         
@@ -68,7 +94,8 @@ final class LessonViewModel: ObservableObject {
         
         // Check if previous lesson is completed
         let previousLesson = lessons[index - 1]
-        if progress.isLessonCompleted(previousLesson.id) {
+        
+        if progress.completedLessonIds.contains(previousLesson.id) {
             return .available
         }
         

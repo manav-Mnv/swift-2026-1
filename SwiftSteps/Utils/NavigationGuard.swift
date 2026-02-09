@@ -15,7 +15,7 @@ struct NavigationGuard {
     static func canNavigateToLesson(
         _ lesson: Lesson?,
         in lessons: [Lesson],
-        progress: ProgressViewModel
+        progress: UserProgress
     ) -> Bool {
         // Defensive: Check lesson exists
         guard let lesson = lesson else {
@@ -48,7 +48,7 @@ struct NavigationGuard {
         }
         
         let previousLesson = lessons[lessonIndex - 1]
-        return progress.isLessonCompleted(previousLesson.id)
+        return progress.completedLessonIds.contains(previousLesson.id)
     }
     
     // MARK: - Level Navigation Validation
@@ -62,7 +62,7 @@ struct NavigationGuard {
     static func canNavigateToLevel(
         _ level: Level?,
         levelViewModel: LevelViewModel,
-        progress: ProgressViewModel
+        progress: UserProgress
     ) -> Bool {
         // Defensive: Check level exists
         guard let level = level else {
@@ -94,7 +94,7 @@ struct NavigationGuard {
     static func canNavigateToTrack(
         _ track: LearningTrack,
         levelViewModel: LevelViewModel,
-        progress: ProgressViewModel,
+        progress: UserProgress,
         appState: AppStateViewModel
     ) -> Bool {
         switch track {
@@ -102,11 +102,9 @@ struct NavigationGuard {
             // Swift track is always available
             return true
         case .swiftUI:
-            // SwiftUI track requires Swift Level 2 completion
-            return appState.isSwiftUITrackUnlocked(
-                levelViewModel: levelViewModel,
-                progress: progress
-            )
+            // This logic is duplicated from AppStateViewModel.isSwiftUITrackUnlocked
+            // Ideally call appState method directly if it doesn't need external progress arg
+            return appState.isSwiftUITrackUnlocked()
         }
     }
     
