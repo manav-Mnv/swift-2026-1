@@ -1,0 +1,410 @@
+    SWIFTSTEPS - COMPLETE PROJECT PLAN
+    Swift Student Challenge 2026
+    ================================================================================
+
+    PROJECT OVERVIEW
+    ----------------
+    Build a beginner-focused Swift learning app called "SwiftSteps" for the Swift 
+    Student Challenge. The app teaches Swift and SwiftUI through small, calm, 
+    interactive lessons.
+
+    CORE REQUIREMENTS
+    -----------------
+    ✓ Built with SwiftUI using MVVM architecture
+    ✓ Compatible with Swift Playgrounds
+    ✓ Works fully offline (no internet required)
+    ✓ Beginner-safe code with clarity as priority
+    ✓ Lesson-driven, scalable architecture
+    ✓ Clean, modular structure with simple naming conventions
+
+
+    PHASE 1: PROJECT STRUCTURE & ARCHITECTURE
+    ==========================================
+
+    1. PROJECT STRUCTURE DESIGN
+    ------------------------
+    Goal: Create clean, scalable folder organization
+    
+    Structure:
+    - Models/ - Domain data models (Lesson, Level, Badge, UserProgress)
+    - ViewModels/ - MVVM ViewModels (AppStateViewModel, LevelViewModel, etc.)
+    - Views/ - All SwiftUI screens and UI components
+        - Onboarding/
+        - Home/
+        - Levels/
+        - Lessons/
+        - Progress/
+        - Rewards/
+        - Components/ (Reusable UI components)
+    - DesignSystem/ - Centralized colors, fonts, spacing
+    - Resources/ - Assets, lesson content JSON files
+    - SwiftStepsApp.swift - Main app entry point
+
+    2. DATA MODELS
+    -----------
+    Goal: Define core domain models (simple, explicit, UI-independent)
+    
+    Models to Create:
+    
+    a) Lesson (struct, Identifiable)
+        - id, title, description, content
+        - lessonType (theory, interactive, quiz)
+        - isCompleted, isLocked
+        - estimatedMinutes
+    
+    b) Level (struct, Identifiable)
+        - id, title, description
+        - lessons array
+        - isCompleted, isLocked
+        - track (Swift or SwiftUI)
+    
+    c) Badge (struct, Identifiable)
+        - id, title, description, imageName
+        - requirement (e.g., "Complete Swift Level 1")
+        - isEarned
+    
+    d) UserProgress (struct)
+        - completedLessonIDs
+        - completedLevelIDs
+        - earnedBadgeIDs
+        - currentLessonID
+        - streakDays, totalXP
+
+    3. VIEWMODELS (MVVM)
+    ------------------
+    Goal: Implement all state and business logic
+    
+    ViewModels to Create:
+    
+    a) AppStateViewModel (@Published properties)
+        - Owns: all levels, all badges, user progress
+        - Controls: app-wide progression, navigation state
+        - Methods: loadInitialData(), unlockLevel(), markLessonComplete()
+    
+    b) LevelViewModel
+        - Owns: current level, lessons in level
+        - Controls: lesson unlocking logic, level completion
+        - Methods: canAccessLesson(), completedLessonsCount()
+    
+    c) LessonViewModel
+        - Owns: current lesson content, user answers
+        - Controls: lesson execution, validation
+        - Methods: submitAnswer(), executeCode(), validateQuiz()
+    
+    d) ProgressViewModel
+        - Owns: calculated progress stats
+        - Controls: XP calculations, badge checks
+        - Methods: calculateTotalProgress(), checkBadgeEligibility()
+
+
+    PHASE 2: DESIGN SYSTEM
+    ======================
+
+    4. UNIFIED DESIGN SYSTEM
+    ---------------------
+    Goal: Define visual foundation for consistency and accessibility
+    
+    Components:
+    
+    a) Colors (AppColors.swift)
+        - Primary: Indigo (#4F46E5)
+        - Secondary: Emerald (#10B981)
+        - Background: System background
+        - Text: Primary, secondary, tertiary
+        - Success/Error/Warning colors
+        - Support for Light/Dark mode
+    
+    b) Typography (AppTypography.swift)
+        - Headline, Title, Body, Caption styles
+        - SF Pro system font
+        - Accessibility support (Dynamic Type)
+    
+    c) Spacing & Layout (AppSpacing.swift)
+        - Standard spacing scale (4, 8, 12, 16, 24, 32, 48)
+        - Corner radius values
+        - Padding presets
+    
+    d) Foundational UI Components
+        - PrimaryButton / SecondaryButton
+        - Card container
+        - BadgeIcon
+        - ProgressRing
+        - All with consistent styling from design system
+
+
+    PHASE 3: CORE UI SCREENS
+    =========================
+
+    5. MAIN APP SCREENS
+    ----------------
+    Goal: Translate state/logic into clear, calm UI with NavigationStack
+    
+    Screens to Build:
+    
+    a) Onboarding Flow
+        - Welcome screen with app introduction
+        - Feature highlights (3-4 cards)
+        - "Start Learning" CTA
+        - One-time only, sets hasCompletedOnboarding flag
+    
+    b) Home Screen (ContentView.swift)
+        - Greeting header with user stats
+        - "Continue Learning" card (current lesson)
+        - Track selection (Swift, SwiftUI)
+        - Quick stats (streak, XP, badges)
+        - Navigation to Progress/Rewards
+    
+    c) Learning Path / Level Selection Screen
+        - Shows all levels for chosen track
+        - Visual state: locked/unlocked/completed
+        - Level cards with progress indicators
+        - SwiftUI track locked until Swift Level 2 complete
+    
+    d) Lesson Screen
+        - Lesson title and description
+        - Content area (scrollable text, code, interactive)
+        - Code editor for interactive lessons
+        - Quiz UI for quiz lessons
+        - "Next" / "Complete" buttons
+        - Progress bar at top
+    
+    e) Progress & Rewards Screen
+        - Overall progress visualization
+        - Earned badges grid
+        - Locked badges (grayed out)
+        - Stats: XP, streak, completion percentage
+
+
+    PHASE 4: LEARNING FLOW UI
+    ==========================
+
+    6. DETAILED LEARNING FLOW
+    ----------------------
+    Goal: Create interconnected learning experience with state-driven navigation
+    
+    Five Interconnected Screens:
+    
+    a) Track Selection View
+        - Choose Swift or SwiftUI track
+        - Gate SwiftUI behind Swift Level 2 completion
+        - Visual indication of locked state
+    
+    b) Level Selection View
+        - Show all levels in track
+        - LevelCard component for each level
+        - Display lock/unlock/complete states
+        - Tap to navigate to lesson list
+    
+    c) Lesson List View
+        - All lessons in selected level
+        - LessonRow component for each lesson
+        - StateIndicator shows lock/unlock/complete
+        - Sequential unlocking (complete previous to unlock next)
+    
+    d) Lesson Detail View
+        - Full lesson content
+        - CodeEditor for interactive practice
+        - Quiz UI with validation
+        - ProgressBar shows position in level
+        - "Mark Complete" triggers state update
+    
+    e) Level Completion View
+        - Celebration screen after completing all lessons
+        - Shows badge if earned
+        - XP gained summary
+        - "Next Level" or "Back to Home" options
+
+    Five Reusable Components:
+    
+    a) StateIndicator
+        - Visual indicator for locked/unlocked/completed
+        - Lock icon, checkmark, or empty circle
+    
+    b) LevelCard
+        - Displays level info with progress
+        - Shows number of lessons completed
+        - Locked/unlocked visual styling
+    
+    c) LessonRow
+        - Single lesson in list
+        - Title, duration, state indicator
+        - Tap to navigate to detail
+    
+    d) CodeEditor
+        - Simple text editor for code practice
+        - Syntax highlighting (basic)
+        - "Run" button with output area
+    
+    e) ProgressBar
+        - Linear progress indicator
+        - Shows X of Y lessons completed
+
+
+    PHASE 5: SAFETY & EDGE CASE HANDLING
+    =====================================
+
+    7. COMPREHENSIVE SAFETY MECHANISMS
+    -------------------------------
+    Goal: Ensure app never crashes, handles all edge cases gracefully
+    
+    Edge Cases to Handle:
+    
+    a) Data Edge Cases
+        - Empty states: no lessons, no levels, no badges
+        - Invalid IDs: lesson/level not found
+        - Corrupted progress data
+        - Solution: Validate all data, provide fallbacks, show empty state UI
+    
+    b) UI Edge Cases
+        - Very long text (lesson titles, descriptions)
+        - Small screens (iPhone SE)
+        - Large text sizes (accessibility)
+        - Landscape orientation
+        - Solution: ScrollViews, text truncation, responsive layouts
+    
+    c) Lesson Execution Edge Cases
+        - Code that doesn't compile
+        - Infinite loops in user code
+        - Quiz with no correct answer
+        - Solution: Validation, timeouts, clear error messages
+    
+    d) Navigation Edge Cases
+        - Back button pressed during lesson
+        - Attempting to access locked content
+        - Navigating while data is loading
+        - Solution: Proper state checks, disabled buttons, loading states
+    
+    e) Accessibility Edge Cases
+        - VoiceOver navigation
+        - Screen reader announcements
+        - Keyboard navigation
+        - Solution: Accessibility labels, hints, proper semantic structure
+
+    Error Handling Principles:
+    - Never show technical errors to users
+    - All messages human-readable and encouraging
+    - Provide actionable next steps
+    - Log errors for debugging (not shown to user)
+    - Graceful degradation (show what works, hide what doesn't)
+
+
+    PHASE 6: CURRENT IMPLEMENTATION
+    ================================
+
+    8. SWIFTUI UI IMPLEMENTATION
+    -------------------------
+    Goal: Create missing views, refine level completion flow, polish all screens
+    
+    Current Tasks:
+    
+    a) Create Missing Views
+        - LearningPathView (track and level selection)
+        - ProgressView (overall progress and badges)
+    
+    b) Refine Level Completion Flow
+        - Polish LevelCompletionView
+        - Smooth transitions and animations
+        - Proper badge awarding logic
+    
+    c) Polish All Screens
+        - Consistent spacing and styling
+        - Accessibility labels on all interactive elements
+        - Loading states where needed
+        - Empty states for all lists
+    
+    d) Ensure Complete Navigation
+        - All screens accessible via NavigationStack
+        - Back navigation works correctly
+        - State updates reflect in UI immediately
+    
+    e) Beginner-Safe Code
+        - Clear variable names
+        - Comments explaining complex logic
+        - No force unwrapping
+        - Proper error handling throughout
+
+
+    DESIGN PRINCIPLES (ALL PHASES)
+    ===============================
+
+    User Experience:
+    - Calm, encouraging tone
+    - Minimal cognitive load
+    - Clear visual hierarchy
+    - Predictable navigation
+    - Immediate feedback on actions
+
+    Code Quality:
+    - Simple, explicit code
+    - No clever tricks or advanced patterns
+    - Comprehensive comments
+    - Consistent naming conventions
+    - Pure SwiftUI (no UIKit)
+
+    Accessibility:
+    - VoiceOver support on all screens
+    - Dynamic Type support
+    - Sufficient color contrast
+    - Semantic use of SF Symbols
+    - Clear focus indicators
+
+    Platform Compatibility:
+    - iPhone (all sizes)
+    - iPad
+    - Mac (via Catalyst)
+    - Swift Playgrounds compatible
+
+
+    SUCCESS CRITERIA
+    ================
+
+    For Judges:
+    - Understand app flow within 1 minute
+    - See clear learning progression
+    - Experience smooth, bug-free navigation
+    - Appreciate beginner-friendly design
+
+    For Users:
+    - Feel encouraged, not overwhelmed
+    - Understand what to do next
+    - See progress visually
+    - Learn Swift concepts effectively
+
+    Technical:
+    - Builds without errors
+    - Runs on Swift Playgrounds
+    - Works offline
+    - No crashes or dead ends
+    - Handles all edge cases gracefully
+
+
+    CURRENT STATUS (as of Feb 8, 2026)
+    ==================================
+
+    COMPLETED:
+    ✓ Project structure designed
+    ✓ Data models defined
+    ✓ ViewModels architecture planned
+    ✓ Design system created
+    ✓ Core screens implemented
+    ✓ Learning flow UI designed
+    ✓ Safety mechanisms planned
+
+    IN PROGRESS:
+    → Implementing missing SwiftUI views (LearningPathView, ProgressView)
+    → Refining level completion flow
+    → Polishing all screens for final submission
+
+    NEXT STEPS:
+    - Complete LearningPathView implementation
+    - Complete ProgressView implementation  
+    - Final testing across all device sizes
+    - Verify Swift Playgrounds compatibility
+    - Final polish and bug fixes
+    - Prepare submission materials
+
+
+    END OF PLAN
+    ===========
+    This document represents the complete scope of work requested for the 
+    SwiftSteps Swift Student Challenge project.
