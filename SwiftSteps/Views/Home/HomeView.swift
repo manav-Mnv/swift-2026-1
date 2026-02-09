@@ -142,6 +142,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
         .environmentObject(AppStateViewModel())
-        .environmentObject(ProgressViewModel())
-        .environmentObject(LevelViewModel())
 }

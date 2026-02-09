@@ -46,6 +46,7 @@ struct LevelCard: View {
         .disabled(isDisabled)
         .accessibilityLabel("Level \(level.levelNumber): \(level.title)")
         .accessibilityHint(state == .locked ? "This level is locked" : "Tap to view lessons")
-        .accessibilityAddTraits(isDisabled ? [.isButton, .isNotEnabled] : .isButton)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityRemoveTraits(isDisabled ? .isEnabled : [])
     }
 }

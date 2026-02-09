@@ -80,7 +80,7 @@ struct NavigationGuard {
         }
         
         // Use LevelViewModel's validation logic
-        return levelViewModel.isLevelUnlocked(level.levelNumber, progress: progress)
+        return levelViewModel.isLevelUnlocked(level)
     }
     
     // MARK: - Track Navigation Validation

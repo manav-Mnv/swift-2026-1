@@ -49,6 +49,7 @@ struct LessonRow: View {
         .disabled(isDisabled)
         .accessibilityLabel("Lesson \(lessonNumber): \(lesson.title)")
         .accessibilityHint(state == .locked ? "This lesson is locked" : "Tap to start lesson")
-        .accessibilityAddTraits(isDisabled ? [.isButton, .isNotEnabled] : .isButton)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityRemoveTraits(isDisabled ? .isEnabled : [])
     }
 }

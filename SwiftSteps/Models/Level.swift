@@ -1,6 +1,6 @@
 import Foundation
 
-struct Level: Identifiable, Codable {
+struct Level: Identifiable, Codable, Hashable {
     let id: UUID
     let levelNumber: Int
     let title: String
