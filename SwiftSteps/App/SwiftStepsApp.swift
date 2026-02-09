@@ -27,7 +27,10 @@ struct SwiftStepsApp: App {
                         }
                     }
             }
+            }
             .environmentObject(appState)
+            .environmentObject(appState.levelViewModel)
+            .environmentObject(ProgressViewModel()) // Temporary: Isolated progress instance for now
         }
     }
 }

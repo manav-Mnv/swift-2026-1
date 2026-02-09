@@ -15,7 +15,9 @@ struct OnboardingContainerView: View {
             PathSelectionView()
                 .tag(2)
         }
+        #if os(iOS)
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
+        #endif
     }
 }

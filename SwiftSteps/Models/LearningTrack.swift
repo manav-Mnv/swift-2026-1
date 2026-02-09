@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a distinct learning path or subject area
-enum LearningTrack: String, Codable, CaseIterable, Identifiable {
+enum LearningTrack: String, Codable, CaseIterable, Identifiable, Hashable {
     case swift
     case swiftUI
     

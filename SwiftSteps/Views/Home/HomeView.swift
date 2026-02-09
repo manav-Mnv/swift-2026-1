@@ -50,7 +50,9 @@ struct HomeView: View {
         }
         .background(AppColors.background)
         .navigationTitle("SwiftSteps")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
     }
     
     // MARK: - Subviews

@@ -23,7 +23,9 @@ struct LearningPathView: View {
     var body: some View {
         TrackSelectionView()
             .navigationTitle("Learning Path")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
+            #endif
             .background(AppColors.background)
     }
 }
@@ -33,7 +35,10 @@ struct LearningPathView: View {
     NavigationStack {
         LearningPathView()
             .environmentObject(AppStateViewModel())
-            .environmentObject(LevelViewModel())
+            .environmentObject(LevelViewModel(
+                levels: SampleData.levels,
+                userProgress: UserProgress.default
+            ))
             .environmentObject(ProgressViewModel())
     }
 }

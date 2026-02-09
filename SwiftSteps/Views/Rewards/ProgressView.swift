@@ -42,7 +42,9 @@ struct ProgressView: View {
         }
         .background(AppColors.background)
         .navigationTitle("Your Progress")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
     }
     
     // MARK: - Subviews
@@ -182,6 +184,9 @@ struct ProgressView: View {
     NavigationStack {
         ProgressView()
             .environmentObject(ProgressViewModel())
-            .environmentObject(LevelViewModel())
+            .environmentObject(LevelViewModel(
+                levels: SampleData.levels,
+                userProgress: UserProgress.default
+            ))
     }
 }

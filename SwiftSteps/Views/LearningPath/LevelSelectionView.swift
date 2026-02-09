@@ -65,27 +65,3 @@ struct LevelSelectionView: View {
         }
     }
 }
-
-struct EmptyStateView: View {
-    let icon: String
-    let title: String
-    let message: String
-    
-    var body: some View {
-        VStack(spacing: AppSpacing.medium) {
-            Image(systemName: icon)
-                .font(.system(size: 64))
-                .foregroundColor(AppColors.disabled)
-            
-            Text(title)
-                .font(AppFonts.subtitle)
-                .foregroundColor(AppColors.textPrimary)
-            
-            Text(message)
-                .font(AppFonts.body)
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(AppSpacing.large)
-    }
-}

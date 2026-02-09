@@ -25,6 +25,9 @@ struct UserProgress: Codable {
         self.hasCompletedOnboarding = hasCompletedOnboarding
     }
     
+    // MARK: - Default
+    static let `default` = UserProgress()
+    
     // MARK: - Safety & Validation
     
     /// Check if progress data is in a valid state
