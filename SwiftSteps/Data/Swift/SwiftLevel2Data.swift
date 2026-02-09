@@ -2,12 +2,17 @@ import Foundation
 
 struct SwiftLevel2Data {
     static let level = Level(
+        levelNumber: 2,
         title: "Swift Advanced",
         description: "Master protocols, generics, and error handling",
         lessons: [
-            // Add advanced Swift lessons here
-            // Protocols, Generics, Error Handling, Closures
+            Lesson(
+                title: "Coming Soon",
+                description: "More lessons coming soon!",
+                content: "This level is under construction. Check back soon for more content!",
+                estimatedMinutes: 1
+            )
         ],
-        levelNumber: 2
+        track: .swift
     )
 }

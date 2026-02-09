@@ -7,7 +7,7 @@ struct TrackSelectionView: View {
     
     @State private var showSwiftUILockedAlert = false
     @State private var navigateToLevelSelection = false
-    @State private var selectedPath: LearningPath = .swift
+    @State private var selectedPath: LearningTrack = .swift
     
     var body: some View {
         ScrollView {
@@ -33,7 +33,7 @@ struct TrackSelectionView: View {
                     isLocked: false,
                     action: {
                         selectedPath = .swift
-                        appStateViewModel.selectLearningPath(.swift)
+                        appStateViewModel.selectLearningTrack(.swift)
                         navigateToLevelSelection = true
                     }
                 )
@@ -48,7 +48,7 @@ struct TrackSelectionView: View {
                     action: {
                         if isSwiftUIUnlocked {
                             selectedPath = .swiftUI
-                            appStateViewModel.selectLearningPath(.swiftUI)
+                            appStateViewModel.selectLearningTrack(.swiftUI)
                             navigateToLevelSelection = true
                         } else {
                             showSwiftUILockedAlert = true

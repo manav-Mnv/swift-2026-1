@@ -2,17 +2,26 @@ import Foundation
 
 struct Level: Identifiable, Codable {
     let id: UUID
+    let levelNumber: Int
     let title: String
     let description: String
     let lessons: [Lesson]
-    let levelNumber: Int
+    let track: LearningTrack
     
-    init(id: UUID = UUID(), title: String, description: String, lessons: [Lesson], levelNumber: Int) {
+    init(
+        id: UUID = UUID(),
+        levelNumber: Int,
+        title: String,
+        description: String,
+        lessons: [Lesson],
+        track: LearningTrack
+    ) {
         self.id = id
+        self.levelNumber = max(0, levelNumber) // Ensure non-negative
         self.title = title
         self.description = description
         self.lessons = lessons
-        self.levelNumber = max(0, levelNumber) // Ensure non-negative
+        self.track = track
     }
     
     // MARK: - Safety & Validation
@@ -43,4 +52,14 @@ struct Level: Identifiable, Codable {
         }
         return lessons[index]
     }
+    
+    /// Total estimated time for all lessons
+    var totalEstimatedMinutes: Int {
+        return lessons.reduce(0) { $0 + $1.estimatedMinutes }
+    }
+}
+
+enum LearningTrack: String, Codable {
+    case swift
+    case swiftUI
 }

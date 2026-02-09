@@ -2,12 +2,10 @@ import SwiftUI
 
 struct LessonListView: View {
     let level: Level
+    let levelViewModel: LevelViewModel
     
-    @EnvironmentObject var progressViewModel: ProgressViewModel
+    @EnvironmentObject var appState: AppStateViewModel
     @StateObject private var lessonViewModel = LessonViewModel()
-    
-    @State private var navigateToLessonDetail = false
-    @State private var selectedLesson: Lesson?
     
     var body: some View {
         ScrollView {
@@ -25,7 +23,7 @@ struct LessonListView: View {
                         .multilineTextAlignment(.center)
                     
                     ProgressBar(
-                        completed: progressViewModel.completedLessonsInLevel(level),
+                        completed: levelViewModel.userProgress.completedLessonsInLevel(level),
                         total: level.lessons.count
                     )
                     .padding(.horizontal, AppSpacing.medium)
@@ -47,7 +45,11 @@ struct LessonListView: View {
                 } else {
                     VStack(spacing: AppSpacing.medium) {
                         ForEach(Array(level.lessons.enumerated()), id: \.element.id) { index, lesson in
-                            let state = lessonViewModel.getLessonState(lesson, in: level.lessons, progress: progressViewModel)
+                            let state = lessonViewModel.getLessonState(
+                                lesson, 
+                                in: level.lessons, 
+                                userProgress: levelViewModel.userProgress
+                            )
                             let itemState = convertLessonStateToItemState(state)
                             
                             LessonRow(
@@ -57,8 +59,7 @@ struct LessonListView: View {
                                 isDisabled: state == .locked
                             ) {
                                 if state != .locked {
-                                    selectedLesson = lesson
-                                    navigateToLessonDetail = true
+                                    appState.goToLesson(lesson)
                                 }
                             }
                         }
@@ -69,12 +70,6 @@ struct LessonListView: View {
         }
         .background(AppColors.background)
         .navigationTitle("Lessons")
-        .navigationDestination(isPresented: $navigateToLessonDetail) {
-            if let lesson = selectedLesson {
-                LessonDetailView(lesson: lesson, level: level)
-                    .environmentObject(progressViewModel)
-            }
-        }
     }
     
     private func convertLessonStateToItemState(_ lessonState: LessonState) -> ItemState {

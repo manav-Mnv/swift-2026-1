@@ -1,113 +1,62 @@
 import Foundation
-import SwiftUI
 
-enum LevelState {
-    case locked
-    case unlocked
-    case completed
-}
+final class LevelViewModel: ObservableObject {
 
-class LevelViewModel: ObservableObject {
-    @Published var availableLevels: [Level] = []
-    @Published var currentLevel: Level?
-    @Published var loadError: String?
-    
-    func loadLevelsForPath(_ path: LearningPath) {
-        // Clear any previous error
-        loadError = nil
-        
-        switch path {
-        case .swift:
-            availableLevels = [
-                SwiftLevel0Data.level,
-                SwiftLevel1Data.level,
-                SwiftLevel2Data.level
-            ]
-        case .swiftUI:
-            availableLevels = [
-                SwiftUILevel0Data.level
-            ]
-        }
-        
-        // Validate loaded levels
-        let invalidLevels = availableLevels.filter { !$0.isValid }
-        if !invalidLevels.isEmpty {
-            loadError = "Some levels couldn't be loaded correctly"
-        }
+    // MARK: - Published State (UI-relevant only)
+    @Published private(set) var levels: [Level]
+    @Published private(set) var userProgress: UserProgress
+
+    // MARK: - Init
+    init(levels: [Level], userProgress: UserProgress) {
+        self.levels = levels.sorted { $0.levelNumber < $1.levelNumber }
+        self.userProgress = userProgress
     }
-    
-    func selectLevel(_ level: Level) {
-        // Validate level before selection
-        guard level.isValid else {
-            loadError = "This level is not available"
-            return
-        }
-        currentLevel = level
-    }
-    
-    func isLevelUnlocked(_ levelNumber: Int, progress: ProgressViewModel) -> Bool {
-        // Defensive: Validate level number
-        guard levelNumber >= 0 else {
-            return false
-        }
-        
-        // Level 0 is always unlocked
-        if levelNumber == 0 {
+
+    // MARK: - Level State Queries
+
+    func isLevelUnlocked(_ level: Level) -> Bool {
+        if level.levelNumber == 0 {
             return true
         }
-        
-        // Defensive: Check if levels exist
-        guard !availableLevels.isEmpty else {
+
+        return userProgress.completedLevelNumbers.contains(level.levelNumber - 1)
+    }
+
+    func isLevelCompleted(_ level: Level) -> Bool {
+        userProgress.completedLevelNumbers.contains(level.levelNumber)
+    }
+
+    // MARK: - Lesson State Queries
+
+    func isLessonUnlocked(_ lesson: Lesson, in level: Level) -> Bool {
+        guard isLevelUnlocked(level) else { return false }
+
+        guard let index = level.lessons.firstIndex(where: { $0.id == lesson.id }) else {
             return false
         }
-        
-        // Check if previous level exists and is completed
-        if let previousLevel = availableLevels.first(where: { $0.levelNumber == levelNumber - 1 }) {
-            // Defensive: Validate level has lessons
-            guard previousLevel.hasLessons else {
-                return false
-            }
-            return isLevelCompleted(previousLevel, progress: progress)
+
+        if index == 0 {
+            return true
         }
-        
-        return false
+
+        let previousLesson = level.lessons[index - 1]
+        return userProgress.completedLessonIds.contains(previousLesson.id)
     }
-    
-    func isLevelCompleted(_ level: Level, progress: ProgressViewModel) -> Bool {
-        // Defensive: Check level has lessons
-        guard level.hasLessons else {
-            return false
-        }
-        
-        // Check if all lessons in this level are completed
-        for lesson in level.lessons {
-            if !progress.isLessonCompleted(lesson.id) {
-                return false
-            }
-        }
-        return true
-    }
-    
-    func getLevelState(_ level: Level, progress: ProgressViewModel) -> LevelState {
-        if isLevelCompleted(level, progress: progress) {
-            return .completed
-        } else if isLevelUnlocked(level.levelNumber, progress: progress) {
-            return .unlocked
-        } else {
-            return .locked
+
+    // MARK: - Progress Updates
+
+    func markLessonCompleted(_ lesson: Lesson, in level: Level) {
+        userProgress.completedLessonIds.insert(lesson.id)
+
+        if isLevelNowCompleted(level) {
+            userProgress.completedLevelNumbers.insert(level.levelNumber)
         }
     }
-    
-    // MARK: - Safety Helpers
-    
-    /// Check if any levels are currently loaded
-    var hasLevels: Bool {
-        return !availableLevels.isEmpty
-    }
-    
-    /// Get count of available levels
-    var levelCount: Int {
-        return availableLevels.count
+
+    // MARK: - Private Helpers
+
+    private func isLevelNowCompleted(_ level: Level) -> Bool {
+        let lessonIds = Set(level.lessons.map { $0.id })
+        return lessonIds.isSubset(of: userProgress.completedLessonIds)
     }
 }
-

@@ -2,9 +2,9 @@ import SwiftUI
 
 struct LessonDetailView: View {
     let lesson: Lesson
-    let level: Level
+    let level: Level?
     
-    @EnvironmentObject var progressViewModel: ProgressViewModel
+    @EnvironmentObject var appState: AppStateViewModel
     @StateObject private var lessonViewModel = LessonViewModel()
     
     @Environment(\.dismiss) private var dismiss
@@ -12,6 +12,11 @@ struct LessonDetailView: View {
     @State private var showCompletionMessage = false
     @State private var showLevelCompletion = false
     @State private var earnedBadge: Badge? = nil
+    
+    init(lesson: Lesson, level: Level? = nil) {
+        self.lesson = lesson
+        self.level = level
+    }
     
     var body: some View {
         ScrollView {
@@ -76,24 +81,32 @@ struct LessonDetailView: View {
                     
                     if lessonViewModel.isCorrect {
                         // Mark lesson as completed
-                        progressViewModel.completeLesson(lesson.id)
+                        appState.levelViewModel.completeLesson(lesson.id)
                         
-                        // Check if level is completed
-                        let isLevelCompleted = progressViewModel.checkLevelCompletion(level)
-                        
-                        if isLevelCompleted {
-                            // Check for earned badge
-                            // Note: Badge logic would check specific unlock conditions
-                            // For now, set to nil (no badge system fully implemented)
-                            earnedBadge = nil
+                        // Check if level is completed (if level context is available)
+                        if let level = level {
+                            let isLevelCompleted = appState.levelViewModel.isLevelCompleted(level)
                             
-                            // Show level completion view
-                            showLevelCompletion = true
+                            if isLevelCompleted {
+                                // Check for earned badge
+                                // Note: Badge logic would check specific unlock conditions
+                                // For now, set to nil (no badge system fully implemented)
+                                earnedBadge = nil
+                                
+                                // Show level completion view
+                                showLevelCompletion = true
+                            } else {
+                                // Just show completion message for individual lesson
+                                showCompletionMessage = true
+                                
+                                // Navigate back after a delay
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    dismiss()
+                                }
+                            }
                         } else {
-                            // Just show completion message for individual lesson
+                            // No level context, just show completion and dismiss
                             showCompletionMessage = true
-                            
-                            // Navigate back after a delay
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 dismiss()
                             }

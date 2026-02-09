@@ -25,68 +25,32 @@ import SwiftUI
 /// - Sufficient contrast via design system colors
 struct HomeView: View {
     // MARK: - Environment Objects
-    @EnvironmentObject private var progressViewModel: ProgressViewModel
-    @EnvironmentObject private var levelViewModel: LevelViewModel
-    @EnvironmentObject private var appState: AppStateViewModel
-    
-    // MARK: - Navigation State
-    /// Controls navigation to the Learning Path screen
-    /// When true, presents LearningPathView via navigationDestination
-    @State private var showLearningPath = false
-    
-    /// Controls navigation to the Progress & Rewards screen
-    /// When true, presents ProgressView via navigationDestination
-    @State private var showProgress = false
+    @EnvironmentObject var appState: AppStateViewModel
     
     // MARK: - Body
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: AppSpacing.large) {
-                    // MARK: Welcome Header
-                    welcomeHeader
-                    
-                    // MARK: Progress Summary Card
-                    progressSummaryCard
-                    
-                    // MARK: Bird Guide Encouragement
-                    BirdGuideView(message: motivationalMessage)
-                    
-                    // MARK: Primary Action
-                    PrimaryButton(title: "Continue Learning") {
-                        // Load levels for the selected learning path
-                        levelViewModel.loadLevelsForPath(appState.selectedLearningPath)
-                        // Trigger navigation
-                        showLearningPath = true
-                    }
-                    .padding(.top, AppSpacing.medium)
+        ScrollView {
+            VStack(spacing: AppSpacing.large) {
+                // MARK: Welcome Header
+                welcomeHeader
+                
+                // MARK: Progress Summary Card
+                progressSummaryCard
+                
+                // MARK: Bird Guide Encouragement
+                BirdGuideView(message: motivationalMessage)
+                
+                // MARK: Primary Action
+                PrimaryButton(title: "Continue Learning") {
+                    appState.goToLevels()
                 }
-                .padding(AppSpacing.medium)
+                .padding(.top, AppSpacing.medium)
             }
-            .background(AppColors.background)
-            .navigationTitle("SwiftSteps")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showProgress = true
-                    } label: {
-                        Image(systemName: "chart.bar.fill")
-                            .foregroundColor(AppColors.primary)
-                    }
-                    .accessibilityLabel("View Progress")
-                    .accessibilityHint("See your completed lessons and earned badges")
-                }
-            }
-            // State-driven navigation to LearningPathView
-            .navigationDestination(isPresented: $showLearningPath) {
-                LearningPathView()
-            }
-            // State-driven navigation to ProgressView
-            .navigationDestination(isPresented: $showProgress) {
-                ProgressView()
-            }
+            .padding(AppSpacing.medium)
         }
+        .background(AppColors.background)
+        .navigationTitle("SwiftSteps")
+        .navigationBarTitleDisplayMode(.large)
     }
     
     // MARK: - Subviews
@@ -154,7 +118,7 @@ struct HomeView: View {
     /// - Returns 0 if completedLessonIds is empty
     /// - No crashes or force-unwraps
     private var completedLessonsCount: Int {
-        progressViewModel.userProgress.completedLessonIds.count
+        appState.levelViewModel.userProgress.completedLessonIds.count
     }
     
     /// Motivational message based on progress

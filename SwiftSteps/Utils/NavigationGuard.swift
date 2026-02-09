@@ -92,7 +92,7 @@ struct NavigationGuard {
     ///   - progress: User's current progress
     /// - Returns: True if navigation is allowed, false otherwise
     static func canNavigateToTrack(
-        _ track: LearningPath,
+        _ track: LearningTrack,
         levelViewModel: LevelViewModel,
         progress: ProgressViewModel,
         appState: AppStateViewModel
@@ -121,7 +121,7 @@ struct NavigationGuard {
     static func invalidNavigationMessage(
         lesson: Lesson? = nil,
         level: Level? = nil,
-        track: LearningPath? = nil
+        track: LearningTrack? = nil
     ) -> UserMessage {
         if lesson != nil {
             return .lessonLocked

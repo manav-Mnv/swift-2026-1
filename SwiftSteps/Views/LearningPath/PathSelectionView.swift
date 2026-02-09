@@ -12,8 +12,8 @@ struct PathSelectionView: View {
             
             VStack(spacing: AppSpacing.medium) {
                 Button {
-                    appState.selectLearningPath(.swift)
-                    levelViewModel.loadLevelsForPath(.swift)
+                    appState.selectLearningTrack(.swift)
+                    levelViewModel.loadLevelsForTrack(.swift)
                 } label: {
                     CardView {
                         VStack(spacing: AppSpacing.small) {
@@ -34,8 +34,8 @@ struct PathSelectionView: View {
                 }
                 
                 Button {
-                    appState.selectLearningPath(.swiftUI)
-                    levelViewModel.loadLevelsForPath(.swiftUI)
+                    appState.selectLearningTrack(.swiftUI)
+                    levelViewModel.loadLevelsForTrack(.swiftUI)
                 } label: {
                     CardView {
                         VStack(spacing: AppSpacing.small) {

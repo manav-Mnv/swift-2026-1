@@ -2,12 +2,17 @@ import Foundation
 
 struct SwiftUILevel0Data {
     static let level = Level(
+        levelNumber: 0,
         title: "SwiftUI Basics",
         description: "Build your first user interfaces with SwiftUI",
         lessons: [
-            // Add beginner SwiftUI lessons here
-            // Text, VStack, HStack, Button, Image, etc.
+            Lesson(
+                title: "Coming Soon",
+                description: "More lessons coming soon!",
+                content: "This level is under construction. Check back soon for more content!",
+                estimatedMinutes: 1
+            )
         ],
-        levelNumber: 0
+        track: .swiftUI
     )
 }

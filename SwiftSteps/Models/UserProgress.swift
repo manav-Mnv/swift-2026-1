@@ -2,16 +2,26 @@ import Foundation
 
 struct UserProgress: Codable {
     var completedLessonIds: Set<UUID>
+    var completedLevelNumbers: Set<Int>
     var earnedBadgeIds: Set<UUID>
+    
     var currentLevelNumber: Int
-    var selectedLearningPath: LearningPath
+    var selectedLearningTrack: LearningTrack
     var hasCompletedOnboarding: Bool
     
-    init(completedLessonIds: Set<UUID> = [], earnedBadgeIds: Set<UUID> = [], currentLevelNumber: Int = 0, selectedLearningPath: LearningPath = .swift, hasCompletedOnboarding: Bool = false) {
+    init(
+        completedLessonIds: Set<UUID> = [],
+        completedLevelNumbers: Set<Int> = [],
+        earnedBadgeIds: Set<UUID> = [],
+        currentLevelNumber: Int = 0,
+        selectedLearningTrack: LearningTrack = .swift,
+        hasCompletedOnboarding: Bool = false
+    ) {
         self.completedLessonIds = completedLessonIds
+        self.completedLevelNumbers = completedLevelNumbers
         self.earnedBadgeIds = earnedBadgeIds
         self.currentLevelNumber = max(0, currentLevelNumber) // Ensure non-negative
-        self.selectedLearningPath = selectedLearningPath
+        self.selectedLearningTrack = selectedLearningTrack
         self.hasCompletedOnboarding = hasCompletedOnboarding
     }
     
@@ -28,6 +38,12 @@ struct UserProgress: Codable {
         completedLessonIds.insert(lessonId)
     }
     
+    /// Safe, idempotent method to mark level as complete
+    mutating func safeCompleteLevel(_ levelNumber: Int) {
+        guard levelNumber >= 0 else { return }
+        completedLevelNumbers.insert(levelNumber)
+    }
+    
     /// Safe, idempotent method to earn badge
     /// Can be called multiple times without side effects
     mutating func safeEarnBadge(_ badgeId: UUID) {
@@ -37,10 +53,11 @@ struct UserProgress: Codable {
     /// Reset all progress to initial state
     mutating func reset() {
         completedLessonIds.removeAll()
+        completedLevelNumbers.removeAll()
         earnedBadgeIds.removeAll()
         currentLevelNumber = 0
         hasCompletedOnboarding = false
-        // Keep selectedLearningPath as-is
+        // Keep selectedLearningTrack as-is
     }
     
     /// Get total completed lessons count
@@ -48,13 +65,13 @@ struct UserProgress: Codable {
         return completedLessonIds.count
     }
     
+    /// Get total completed levels count
+    var completedLevelsCount: Int {
+        return completedLevelNumbers.count
+    }
+    
     /// Get total earned badges count
     var earnedBadgesCount: Int {
         return earnedBadgeIds.count
     }
-}
-
-enum LearningPath: String, Codable {
-    case swift
-    case swiftUI
 }

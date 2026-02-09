@@ -2,6 +2,7 @@ import Foundation
 
 struct SwiftLevel0Data {
     static let level = Level(
+        levelNumber: 0,
         title: "Swift Basics",
         description: "Learn the fundamentals of Swift programming",
         lessons: [
@@ -14,7 +15,8 @@ struct SwiftLevel0Data {
                 hints: [
                     "Use quotes around text to make it a String",
                     "Replace the empty quotes with Hello, World!"
-                ]
+                ],
+                estimatedMinutes: 5
             ),
             Lesson(
                 title: "Constants with Let",
@@ -25,7 +27,8 @@ struct SwiftLevel0Data {
                 hints: [
                     "Change 'var' to 'let'",
                     "Constants use 'let' instead of 'var'"
-                ]
+                ],
+                estimatedMinutes: 5
             ),
             Lesson(
                 title: "Numbers in Swift",
@@ -36,9 +39,10 @@ struct SwiftLevel0Data {
                 hints: [
                     "Replace 0 with 10",
                     "Just write the number without quotes"
-                ]
+                ],
+                estimatedMinutes: 5
             )
         ],
-        levelNumber: 0
+        track: .swift
     )
 }

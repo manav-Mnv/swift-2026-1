@@ -1,20 +1,16 @@
 import SwiftUI
 
 struct LevelSelectionView: View {
-    let learningPath: LearningPath
+    @ObservedObject var viewModel: LevelViewModel
     
-    @EnvironmentObject var levelViewModel: LevelViewModel
-    @EnvironmentObject var progressViewModel: ProgressViewModel
-    
-    @State private var navigateToLessonList = false
-    @State private var selectedLevel: Level?
+    @EnvironmentObject var appState: AppStateViewModel
     
     var body: some View {
         ScrollView {
             VStack(spacing: AppSpacing.medium) {
                 // Header
                 VStack(spacing: AppSpacing.small) {
-                    Text(learningPath == .swift ? "Swift Levels" : "SwiftUI Levels")
+                    Text("Swift Levels")
                         .font(AppFonts.title)
                         .foregroundColor(AppColors.textPrimary)
                     
@@ -26,7 +22,7 @@ struct LevelSelectionView: View {
                 .padding(.top, AppSpacing.medium)
                 
                 // Level cards
-                if levelViewModel.availableLevels.isEmpty {
+                if viewModel.availableLevels.isEmpty {
                     EmptyStateView(
                         icon: "book.closed.fill",
                         title: "No Levels Available",
@@ -34,9 +30,9 @@ struct LevelSelectionView: View {
                     )
                     .padding(.top, AppSpacing.xlarge)
                 } else {
-                    ForEach(levelViewModel.availableLevels) { level in
-                        let state = levelViewModel.getLevelState(level, progress: progressViewModel)
-                        let completedCount = progressViewModel.completedLessonsInLevel(level)
+                    ForEach(viewModel.availableLevels) { level in
+                        let state = viewModel.getLevelState(level)
+                        let completedCount = viewModel.userProgress.completedLessonsInLevel(level)
                         let itemState = convertLevelStateToItemState(state)
                         
                         LevelCard(
@@ -46,9 +42,7 @@ struct LevelSelectionView: View {
                             isDisabled: state == .locked
                         ) {
                             if state != .locked {
-                                selectedLevel = level
-                                levelViewModel.selectLevel(level)
-                                navigateToLessonList = true
+                                appState.goToLessons(for: level)
                             }
                         }
                     }
@@ -57,17 +51,7 @@ struct LevelSelectionView: View {
             .padding(AppSpacing.medium)
         }
         .background(AppColors.background)
-        .navigationTitle(learningPath == .swift ? "Swift" : "SwiftUI")
-        .navigationDestination(isPresented: $navigateToLessonList) {
-            if let level = selectedLevel {
-                LessonListView(level: level)
-                    .environmentObject(levelViewModel)
-                    .environmentObject(progressViewModel)
-            }
-        }
-        .onAppear {
-            levelViewModel.loadLevelsForPath(learningPath)
-        }
+        .navigationTitle("Swift")
     }
     
     private func convertLevelStateToItemState(_ levelState: LevelState) -> ItemState {
