@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 
 final class AppStateViewModel: ObservableObject {
     @Published var hasCompletedOnboarding: Bool = false

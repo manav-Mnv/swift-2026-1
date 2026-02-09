@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 final class LevelViewModel: ObservableObject {
 
@@ -6,10 +7,25 @@ final class LevelViewModel: ObservableObject {
     @Published private(set) var levels: [Level]
     @Published private(set) var userProgress: UserProgress
 
+    // MARK: - Computed Properties
+    var availableLevels: [Level] {
+        return levels
+    }
+    
+    var hasLevels: Bool {
+        return !levels.isEmpty
+    }
+
     // MARK: - Init
     init(levels: [Level], userProgress: UserProgress) {
         self.levels = levels.sorted { $0.levelNumber < $1.levelNumber }
         self.userProgress = userProgress
+    }
+    
+    // MARK: - Track Loading
+    func loadLevelsForTrack(_ track: LearningTrack) {
+        // Filter levels by track if needed
+        // For now, levels are already loaded
     }
 
     // MARK: - Level State Queries
@@ -24,6 +40,10 @@ final class LevelViewModel: ObservableObject {
 
     func isLevelCompleted(_ level: Level) -> Bool {
         userProgress.completedLevelNumbers.contains(level.levelNumber)
+    }
+    
+    func isLevelCompleted(_ level: Level, progress: ProgressViewModel) -> Bool {
+        progress.isLevelCompleted(level.levelNumber)
     }
 
     // MARK: - Lesson State Queries

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 
 class ProgressViewModel: ObservableObject {
     @Published var userProgress: UserProgress
@@ -24,6 +25,10 @@ class ProgressViewModel: ObservableObject {
     
     func isLessonCompleted(_ lessonId: UUID) -> Bool {
         return userProgress.completedLessonIds.contains(lessonId)
+    }
+    
+    func isLevelCompleted(_ levelNumber: Int) -> Bool {
+        return userProgress.completedLevelNumbers.contains(levelNumber)
     }
     
     func completedLessonsInLevel(_ level: Level) -> Int {
