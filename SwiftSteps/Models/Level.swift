@@ -59,7 +59,4 @@ struct Level: Identifiable, Codable, Hashable {
     }
 }
 
-enum LearningTrack: String, Codable {
-    case swift
-    case swiftUI
-}
+
